@@ -122,9 +122,9 @@ const vnpayReturn = asyncHandler(async (req, res) => {
   const orderId = vnp_Params['vnp_TxnRef'].split('_')[0]; // Lấy lại ID đơn hàng gốc
   const responseCode = vnp_Params['vnp_ResponseCode'];
   
-// (Đổi localhost:5173 thành tên miền frontend của bạn khi deploy)
-  const frontend_FailUrl = `http://localhost:5173/checkout?payment=fail&orderId=${orderId}`;
-  const frontend_SuccessUrl = `http://localhost:5173/order/${orderId}`;
+// (Đổi localhost:5173 theo frontend của bạn)
+const frontend_FailUrl = `http://localhost:5173/order/${orderId}?payment_status=fail`;
+  const frontend_SuccessUrl = `http://localhost:5173/order/${orderId}?payment_status=success`;
 
   // 1. Kiểm tra chữ ký (secureHash từ VNPAY === signed do mình tạo lại)
   if (secureHash === signed) {

@@ -5,6 +5,8 @@ import path from "path";
 import connectDB from "./config/db.js";
 import cookieParser from 'cookie-parser';
 import paymentRoutes from "./routes/paymentRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 
 // --- IMPORT CÁC ROUTE ---
@@ -14,6 +16,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import couponRoutes from "./routes/couponRoutes.js";
+
 
 // --- IMPORT ERROR MIDDLEWARE ---
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'; 
@@ -37,6 +40,8 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/contact", contactRoutes);
 
 // --- Xử lý Uploads (Static) ---
 const __dirname = path.resolve();
