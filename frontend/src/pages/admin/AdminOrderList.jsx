@@ -20,12 +20,9 @@ const getOrderStatus = (order) => {
     return { text: "Hoàn thành", color: "text-green-700 bg-green-100", icon: <CheckCircle size={14} /> };
   }
   if (order.isPaid) {
-    // Giả sử isPaid=true nhưng chưa giao
     return { text: "Đã thanh toán", color: "text-blue-700 bg-blue-100", icon: <CheckCircle size={14} /> };
   }
-  // Chưa thanh toán, chưa giao
   return { text: "Chờ xác nhận", color: "text-yellow-700 bg-yellow-100", icon: <Clock size={14} /> };
-  // (Bạn có thể thêm logic 'Đã hủy' nếu model có)
 };
 
 // --- Component Spinner (Biểu tượng xoay) ---
@@ -40,22 +37,18 @@ const Spinner = ({ size = 'h-5 w-5', color = 'text-emerald-600' }) => (
 // --- Component Chính ---
 export default function AdminOrderList() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true); // <-- Ban đầu là true để hiển thị "Đang tải"
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [loadingAction, setLoadingAction] = useState(null); // 'deliver_<id>' hoặc 'delete_<id>'
+  const [loadingAction, setLoadingAction] = useState(null); 
 
   // Hàm gọi API lấy danh sách đơn hàng
   const fetchAdminOrders = async () => {
-    // Log ra Console F12 để biết nó có chạy không
     console.log("AdminOrderList (F12): Bắt đầu gọi fetchAdminOrders...");
     try {
       setLoading(true);
       setError('');
       
-      // --- Gọi đúng API ---
       const { data } = await axios.get('/api/orders'); 
-      // ------------------------------------
-      
       console.log("AdminOrderList (F12): API /api/orders thành công, nhận được data:", data);
 
       if (Array.isArray(data)) {
@@ -65,7 +58,6 @@ export default function AdminOrderList() {
          throw new Error("Dữ liệu trả về không đúng định dạng (cần một mảng).");
       }
     } catch (err) {
-      // Nếu API thất bại (lỗi 500, 401, 403), lỗi sẽ hiển thị
       const message = err.response?.data?.message || err.message || 'Lỗi không xác định.';
       setError(`Lỗi khi tải danh sách đơn hàng: ${message}`);
       console.error("AdminOrderList (F12) - Fetch Orders Error:", err);
@@ -75,11 +67,10 @@ export default function AdminOrderList() {
     }
   };
 
-  // Tự động gọi hàm fetch khi component được tải
   useEffect(() => {
     console.log("AdminOrderList (F12): Component mounted, chạy useEffect.");
     fetchAdminOrders();
-  }, []); // Mảng rỗng nghĩa là chỉ chạy 1 lần lúc đầu
+  }, []); 
 
   // Hàm đánh dấu đã giao
   const handleMarkDelivered = async (orderId) => {
@@ -88,7 +79,6 @@ export default function AdminOrderList() {
       setError('');
       try {
         await axios.put(`/api/orders/${orderId}/deliver`);
-        // Cập nhật state ngay lập tức mà không cần gọi lại API
         setOrders(prevOrders =>
           prevOrders.map(order =>
             order._id === orderId ? { ...order, isDelivered: true, deliveredAt: new Date().toISOString() } : order
@@ -110,7 +100,6 @@ export default function AdminOrderList() {
       setError('');
       try {
         await axios.delete(`/api/orders/${orderId}`);
-        // Xóa đơn hàng khỏi state
         setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
       } catch (err) {
         const message = err.response?.data?.message || err.message;
@@ -126,7 +115,6 @@ export default function AdminOrderList() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Quản lý Đơn hàng</h1>
 
-      {/* 1. Hiển thị Lỗi (nếu có) */}
       {error && (
         <div className="mb-4 text-red-700 bg-red-100 p-4 rounded-lg border border-red-300 flex items-center gap-2">
           <AlertCircle size={20} />
@@ -135,20 +123,17 @@ export default function AdminOrderList() {
         </div>
       )}
 
-      {/* 2. Hiển thị "Đang tải..." (nếu loading = true) */}
       {loading ? (
         <div className="text-center py-10 text-gray-600 flex items-center justify-center gap-2">
           <Spinner /> Đang tải danh sách đơn hàng...
         </div>
       
-      /* 3. Hiển thị "Rỗng" (nếu không loading, không lỗi, và không có đơn hàng) */
       ) : orders.length === 0 && !error ? (
          <div className="text-center py-10 text-gray-500 bg-white shadow rounded-lg p-6">
            Hiện chưa có đơn hàng nào.
          </div>
          
-       /* 4. Hiển thị Bảng (nếu có đơn hàng) */
-       ) : !error && (
+      ) : !error && (
         <div className="bg-white shadow rounded-lg overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 align-middle text-sm">
             <thead className="bg-gray-50">
@@ -168,38 +153,37 @@ export default function AdminOrderList() {
 
                   return (
                     <tr key={order._id} className="hover:bg-gray-50">
-                      {/* Mã ĐH */}
                       <td className="px-4 py-3 font-mono text-gray-500 hover:text-gray-700 cursor-pointer" title={order._id}>
                         #{order._id.substring(order._id.length - 6).toUpperCase()}
                       </td>
-                      {/* Khách hàng */}
-                      <td className="px-4 py-3 font-medium text-gray-900">{order.user?.fullName || <span className='text-gray-400 italic'>[Đã xóa]</span>}</td>
-                      {/* Ngày đặt */}
+                      
+                      {/* --- KHÁCH HÀNG (ĐÃ SỬA ĐỂ KHỚP) --- */}
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {/* Kiểm tra 'order.user' VÀ 'order.user.fullName' */}
+                        {order.user && order.user.fullName ? order.user.fullName : (
+                          <span className='text-gray-400 italic'>[Đã xóa]</span>
+                        )}
+                      </td>
+                      
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDateTime(order.createdAt)}</td>
-                      {/* Tổng tiền */}
                       <td className="px-4 py-3 text-gray-700 text-right whitespace-nowrap">{order.totalPrice.toLocaleString('vi-VN')} ₫</td>
                       
-                      {/* Trạng thái */}
                       <td className="px-4 py-3 text-center">
                         <span className={`inline-flex items-center gap-1 ${statusInfo.color} px-2 py-0.5 rounded-full text-xs font-semibold`}>
                           {statusInfo.icon} {statusInfo.text}
                         </span>
-                         {/* Hiển thị thêm icon Chưa TT nếu cần */}
-                         {!order.isPaid && order.paymentMethod !== 'cod' && ( // Chỉ hiển thị nếu không phải COD
+                         {!order.isPaid && order.paymentMethod !== 'cod' && ( 
                            <HelpCircle size={14} className="inline-block ml-1 text-red-500" title="Chưa thanh toán"/>
                          )}
                       </td>
                       
-                      {/* Hành động */}
                       <td className="px-4 py-3 whitespace-nowrap text-center font-medium space-x-1">
-                        {/* Nút Xem chi tiết */}
                         <Link
-                          to={`/order/${order._id}`} // Cần tạo trang chi tiết đơn hàng
+                          to={`/order/${order._id}`}
                           className="text-blue-600 hover:text-blue-900 p-1 inline-block"
                           title="Xem chi tiết đơn hàng"
                         > <Eye size={17} /> </Link>
                         
-                        {/* Nút Đánh dấu đã giao */}
                         {!order.isDelivered && (
                           <button
                             onClick={() => handleMarkDelivered(order._id)}
@@ -211,7 +195,6 @@ export default function AdminOrderList() {
                           </button>
                         )}
                         
-                        {/* Nút Xóa */}
                         <button
                           onClick={() => handleDeleteOrder(order._id)}
                           className={`text-red-500 hover:text-red-700 p-1 inline-block ${loadingAction === `delete_${order._id}` ? 'opacity-50 cursor-wait' : ''}`}

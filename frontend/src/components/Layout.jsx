@@ -1,21 +1,31 @@
-import React from "react";
-import { Outlet } from "react-router-dom"; 
-import Navbar from "./Navbar"; 
-import Footer from "./Footer"; 
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import { Toaster } from 'react-hot-toast'; 
 
 export default function Layout() {
   return (
-    // Flex container để đẩy chân trang xuống
-    <div className="flex min-h-screen flex-col">
-      <Navbar /> {/* hiển thị thanh điều hướng */}
+    // 1. Thêm một thẻ div bao quanh tất cả để dễ dàng quản lý bố cục
+    <div className="flex flex-col min-h-screen">
+      {/* 2. Thêm Toaster ở đây, ngay bên trong thẻ div wrapper */}
+      
+      <Toaster 
+        position="top-right" // Vị trí
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000, // Thời gian 4 giây
+        }}
+      />
+      
+      {/* 3. Navbar, Main, Footer nằm ngay bên trong */}
+      <Navbar />
 
-      {/* Khu vực nội dung chính nơi các thành phần trang sẽ được hiển thị*/}
-      {/* flex-grow cho phép phần này chiếm không gian có sẵn */}
-      <main className="flex-grow bg-gray-50"> {/* Đã thêm nền màu xám nhạt */}
-        <Outlet /> {/* Hiển thị thành phần trang cụ thể (Trang chủ, Chi tiết sản phẩm, v.v.) */}
+      <main className="flex-grow bg-gray-50">
+        <Outlet /> 
       </main>
 
-      <Footer /> {/* Hiển thị chân trang ở phía dưới */}
+      <Footer /> 
     </div>
   );
 }

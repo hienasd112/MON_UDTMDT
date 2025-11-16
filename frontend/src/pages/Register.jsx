@@ -29,7 +29,7 @@ export default function Register() {
       return;
     }
 
-    setError(""); // Xóa lỗi cũ
+    setError(""); 
     setLoading(true);
 
     try {

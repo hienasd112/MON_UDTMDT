@@ -15,6 +15,12 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminCouponList from "./pages/admin/AdminCouponList";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
+import ContactPage from './pages/ContactPage';
+import FAQPage from './pages/FAQPage';
+import WarrantyPolicyPage from './pages/WarrantyPolicyPage';
+import ReturnPolicyPage from './pages/ReturnPolicyPage';
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
 
 // Import 2 "Người gác cổng"
 import ProtectedRoute from "./components/ProtectedRoute"; // Bảo vệ khách hàng
@@ -26,6 +32,8 @@ import AdminProductList from "./pages/admin/AdminProductList";
 import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import AdminOrderList from "./pages/admin/AdminOrderList";
 import AdminUserList from "./pages/admin/AdminUserList";
+import AdminContactList from "./pages/admin/AdminContactList";
+import AdminNewsletterList from "./pages/admin/AdminNewsletterList";
 
 export default function App() {
   return (
@@ -37,13 +45,15 @@ export default function App() {
       {/* === 2. Admin Routes (Bảo vệ bởi AdminRoute) === */}
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/admin/products" replace />} />
+          <Route index element={<AdminDashboard />} /> 
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProductList />} />
           <Route path="products/:id/edit" element={<AdminProductEdit />} />
           <Route path="orders" element={<AdminOrderList />} />
           <Route path="users" element={<AdminUserList />} />
-
           <Route path="coupons" element={<AdminCouponList />} />
+          <Route path="contact-messages" element={<AdminContactList />} />
+          <Route path="subscribers" element={<AdminNewsletterList />} />
         </Route>
       </Route>
 
@@ -56,6 +66,10 @@ export default function App() {
         <Route path="cart" element={<Cart />} /> {/* Ai cũng xem được giỏ hàng */}
         <Route path="products" element={<ProductsPage />} />
         <Route path="order-success" element={<OrderSuccessPage />} /> {/* Trang thành công là public */}
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FAQPage />} />
+        <Route path="policy/warranty" element={<WarrantyPolicyPage />} />
+        <Route path="policy/return" element={<ReturnPolicyPage />} />
 
         {/* --- Shared Route (Cần đăng nhập) --- */}
         {/* Trang chi tiết đơn hàng đặt ở đây, API sẽ kiểm tra quyền */}

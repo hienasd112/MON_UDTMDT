@@ -66,7 +66,7 @@ export default function Home() {
       <div className="relative h-[400px] md:h-[500px] bg-gray-900 text-white flex items-center justify-center">
         {/* Background Image */}
         <img
-          src="https://dummyimage.com/1920x600/111827/808080.png&text=Welcome+to+WatchStore"
+          src="https://standboothvietnam.com/wp-content/uploads/2023/09/dong-ho-3.jpg"
           alt="Watch Store Banner"
           className="absolute inset-0 w-full h-full object-cover opacity-30"
           aria-hidden="true" // Hide decorative image from screen readers

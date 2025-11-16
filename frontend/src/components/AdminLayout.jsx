@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; 
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
-// Import các icon cần thiết
+// Import các icon (ĐÃ THÊM 2 ICON MỚI)
 import {
   ShoppingBag,
   BarChart2,
@@ -10,16 +10,19 @@ import {
   Settings,
   Ticket, 
   Menu,   
-  X,      
+  X,
+  Mail, // <-- THÊM MỚI (Icon cho Đăng ký tin)
+  MessageSquare, // <-- THÊM MỚI (Icon cho Liên hệ)
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
-// --- Component NavLink  ---
-// Giúp tạo link trong sidebar và tự động highlight khi active
+// --- Component NavLink ---
+// (Giữ nguyên component AdminNavLink của bạn)
 const AdminNavLink = ({ to, icon, children, onClick }) => (
   <NavLink
     to={to}
-    end // Chỉ active khi khớp chính xác
+    end 
     onClick={onClick} // Thêm onClick để đóng mobile menu
     className={({ isActive }) =>
       `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-300 transition-all hover:text-white hover:bg-gray-700 ${
@@ -44,7 +47,18 @@ const AdminLayout = () => {
     navigate('/login'); // Chuyển về trang login sau khi logout
   };
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  // --- (SỬA LẠI LOGIC) ---
+  // Hàm này CHỈ ĐÓNG menu (dùng khi click link trên mobile)
+  const closeMobileMenu = () => {
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+  
+  // Hàm này BẬT/TẮT (dùng cho nút hamburger)
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   // --- Sidebar Content (Nội dung dùng chung cho cả Mobile và Desktop) ---
   const SidebarContent = () => (
@@ -57,23 +71,38 @@ const AdminLayout = () => {
         </Link>
       </div>
 
-      {/* Navigation Links */}
+      {/* Navigation Links  */}
       <nav className="flex-1 overflow-auto px-3 py-4 text-sm font-medium lg:px-4 space-y-1">
-        <AdminNavLink to="/admin/products" icon={<ShoppingBag size={18} />} onClick={toggleMobileMenu}>
+        {/* Dùng closeMobileMenu để đảm bảo menu đóng khi click */}
+        <AdminNavLink to="/admin" icon={<LayoutDashboard size={18} />} onClick={closeMobileMenu}>
+        Tổng quan
+        </AdminNavLink>
+        <AdminNavLink to="/admin/products" icon={<ShoppingBag size={18} />} onClick={closeMobileMenu}>
           Quản lý Sản phẩm
         </AdminNavLink>
-        <AdminNavLink to="/admin/orders" icon={<BarChart2 size={18} />} onClick={toggleMobileMenu}>
+        <AdminNavLink to="/admin/orders" icon={<BarChart2 size={18} />} onClick={closeMobileMenu}>
           Quản lý Đơn hàng
         </AdminNavLink>
-        <AdminNavLink to="/admin/users" icon={<Users size={18} />} onClick={toggleMobileMenu}>
+        <AdminNavLink to="/admin/users" icon={<Users size={18} />} onClick={closeMobileMenu}>
           Quản lý Users
         </AdminNavLink>
-        
-        {/* ---  LINK MÃ GIẢM GIÁ --- */}
-        <AdminNavLink to="/admin/coupons" icon={<Ticket size={18} />} onClick={toggleMobileMenu}>
+        <AdminNavLink to="/admin/coupons" icon={<Ticket size={18} />} onClick={closeMobileMenu}>
           Quản lý Mã giảm giá
         </AdminNavLink>
         
+        {/* --- (PHẦN MỚI THÊM VÀO) --- */}
+        <div className="mt-4 pt-4 border-t border-gray-700">
+           <span className="px-3 text-xs font-semibold text-gray-500 uppercase">Hỗ trợ</span>
+           <div className="space-y-1 mt-2">
+             <AdminNavLink to="/admin/contact-messages" icon={<MessageSquare size={18} />} onClick={closeMobileMenu}>
+               Tin nhắn Liên hệ
+             </AdminNavLink>
+             <AdminNavLink to="/admin/subscribers" icon={<Mail size={18} />} onClick={closeMobileMenu}>
+               Đăng ký nhận tin
+             </AdminNavLink>
+           </div>
+        </div>
+        {/* --- (HẾT) --- */}
       </nav>
 
       {/* Footer Sidebar (Thông tin User & Đăng xuất) */}
@@ -85,7 +114,7 @@ const AdminLayout = () => {
          <Link 
             to="/" 
             className="flex w-full items-center justify-center gap-2 rounded-md bg-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
-            onClick={toggleMobileMenu}
+            onClick={closeMobileMenu} // Dùng closeMobileMenu
          >
             <Home size={16} /> Quay lại trang chủ
          </Link>
@@ -112,10 +141,10 @@ const AdminLayout = () => {
       {/* --- Main Content Area (Phần nội dung chính) --- */}
       <main className="flex flex-1 flex-col bg-gray-100">
         
-        {/* Header (Bản Mobile - có nút Menu) */}
+        {/* Header (Bản Mobile - đã sửa) */}
         <header className="flex h-14 items-center gap-4 border-b bg-white px-4 md:hidden">
             <button
-                onClick={toggleMobileMenu}
+                onClick={toggleMobileMenu} // Dùng toggle (bật/tắt)
                 className="text-gray-600 hover:text-gray-900"
                 aria-label="Mở/Đóng menu"
             >
@@ -125,14 +154,14 @@ const AdminLayout = () => {
                 <Settings className="h-5 w-5 text-emerald-600" />
                 <span className="">Admin</span>
             </Link>
-            {/* (Có thể thêm icon user hoặc logout ở đây cho mobile) */}
+            {/* (Đã xóa 2 chữ "Dự án:", "Giao dịch:" bị lỗi copy-paste) */}
         </header>
 
         {/* --- Sidebar (Bản Mobile - Dạng Pop-up) --- */}
         {isMobileMenuOpen && (
             <div 
               className="fixed inset-0 z-40 bg-black/60 md:hidden" 
-              onClick={toggleMobileMenu} // Click nền đen để đóng
+              onClick={closeMobileMenu} // Click nền đen để đóng
             >
               <aside 
                 className="absolute left-0 top-0 h-full w-[280px] border-r border-gray-700 bg-gray-900 text-white z-50"
@@ -145,7 +174,7 @@ const AdminLayout = () => {
 
          {/* Nội dung chính (các trang admin sẽ được render ở đây) */}
          <div className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-            <Outlet /> {/* Đây là nơi AdminProductList, AdminOrderList... được hiển thị */}
+            <Outlet /> {/* Đây là nơi AdminProductList, AdminContactList... được hiển thị */}
          </div>
       </main>
     </div>

@@ -31,11 +31,11 @@ export const apiLogout = async () => {
   } catch (error) {
      // Thường không cần xử lý lỗi ở đây, vì frontend sẽ xóa user state
      console.error("Lỗi gọi API logout:", error);
-     // throw new Error("Lỗi khi đăng xuất"); // Có thể bỏ qua lỗi này
+     // throw new Error("Lỗi khi đăng xuất"); 
   }
 };
 
-// --- HÀM LẤY PROFILE (Quan trọng) ---
+// --- HÀM LẤY PROFILE  ---
 export const apiGetProfile = async () => {
   try {
     // API này yêu cầu cookie 'jwt' (được gửi tự động)
@@ -48,7 +48,7 @@ export const apiGetProfile = async () => {
   }
 };
 
-// --- HÀM CẬP NHẬT PROFILE (Quan trọng) ---
+// --- HÀM CẬP NHẬT PROFILE ---
 export const apiUpdateProfile = async (profileData) => {
   try {
      // API này cũng yêu cầu cookie 'jwt'
